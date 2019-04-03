@@ -1,5 +1,9 @@
-# MMM-Speech-Dispatcher
+# MMM-Polly
 A MagicMirror² Module for performing Text-to-Speech using Amazon Polly
+
+## Screenshot
+
+[![Screenshot of MMM-Polly](screenshot.png)](https://www.youtube.com/watch?v=IFhaPkYSVIs)
 
 ## Installation
 
