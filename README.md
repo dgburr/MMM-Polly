@@ -45,9 +45,12 @@ echo "Hello world" | python3 polly_client.py
 {
     module: "MMM-Polly",
     config: {
-        voice: "Nicola",    // OPTIONAL: voice for Polly to use, e.g. "Nicola"
-        language: "en-AU", // OPTIONAL: language for Polly to use, e.g. "en-AU"
-        notification: "SPEECH_DISPATCHER_SAID", // OPTIONAL: notification to send after text has been spoken
+        voice: null,    // Voice for Polly to use, e.g. "Nicole".
+        language: null, // Language for Polly to use, e.g. "en-AU".
+        rate: 100,      // Specify a percentage to increase or decrease the speed of the speech. 100% indicates no change from the normal rate.  Percentages greater than 100% increase the rate.  Percentages below 100% decrease the rate.  The minimum value you can provide is 20%.
+        pitch: 0,       // Specify a percentage to raise or lower the tone (pitch) of the speech.  The maximum value allowed is +50%.  The smallest value allowed is -33.3%.
+        volume: 0,      // Change the volume of speech (in decibels).  +6dB is approximately twice the current amplitude. The maximum positive value is about +4.08dB.  -6dB means approximately half the current amplitude.
+        notification: "SPEECH_DISPATCHER_SAID", // notification to send after text has been spoken
     }
 }
 ```

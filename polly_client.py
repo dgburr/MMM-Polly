@@ -25,8 +25,13 @@ class Client:
 
         self.polly = boto3.client('polly')
 
-    def speak(self, text, lang, voice):
-        resp = self.polly.synthesize_speech(OutputFormat='mp3', Text=text, LanguageCode=lang, VoiceId=voice)
+    def speak(self, text, lang, voice, rate, pitch, volume):
+        text = '<speak><prosody rate="%d%%" pitch="%+d%%" volume="%+ddB">%s</prosody></speak>' % (rate, pitch, volume, text)
+        resp = self.polly.synthesize_speech(OutputFormat='mp3',
+                Text=text,
+                TextType='ssml',
+                LanguageCode=lang,
+                VoiceId=voice)
         audio_stream = resp['AudioStream']
         audio_data = audio_stream.read()
         audio_stream.close()
@@ -41,10 +46,13 @@ class Client:
 def help(name):
     print("%s: python wrapper for communicating with Amazon Polly\n" % name)
     print("Usage:")
-    print("\t--lang=<lang>:     Use the specified language (default: en-AU)")
-    print("\t--voice=<voice>:   Use the specified voice (default: Nicole)")
-    print("\t--debug:           Increase verbosity")
-    print("\t--help:            This message\n")
+    print("\t-l|--lang=<lang>:    Use the specified language (default: en-AU)")
+    print("\t-v|--voice=<voice>:  Use the specified voice (default: Nicole)")
+    print("\t-r|--rate=<rate>:    Modify the rate of speech, percentage: [20-200] (default: 100)")
+    print("\t-p|--pitch=<pitch>:  Raise or lower the pitch (tone) of the speech, percentage: [-33-50] (default: 0)")
+    print("\t-m|--volume=<vol>:   Change the volume for the speech, decibels (default: 0)")
+    print("\t-d|--debug:          Increase verbosity")
+    print("\t-h|--help:           Show usage information\n")
     sys.exit(2)
 
 
@@ -53,23 +61,43 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "l:v:dh", ["lang=", "voice=", "debug", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "l:v:r:p:m:dh", ["lang=", "voice=", "rate=", "pitch=", "volume=", "debug", "help"])
     except getopt.GetoptError as err:
         print(str(err))
         help(sys.argv[0])
     lang = 'en-AU'
     voice = 'Nicole'
+    rate = 100 # percent
+    pitch = 0 # percent (+/-)
+    volume = 0 # decibels (+/-)
     debug = False
     for opt, arg in opts:
         if opt in ("-l", "--lang"):
             lang = arg
         elif opt in ("-v", "--voice"):
             voice = arg
+        elif opt in ("-r", "--rate"):
+            try:
+                rate = int(arg)
+            except ValueError:
+                print("Error: rate should be an integer\n")
+                help(sys.argv[0])
+        elif opt in ("-p", "--pitch"):
+            try:
+                pitch = int(arg)
+            except ValueError:
+                print("Error: pitch should be an integer\n")
+                help(sys.argv[0])
+        elif opt in ("-m", "--volume"):
+            try:
+                volume = int(arg)
+            except ValueError:
+                print("Error: volume should be an integer\n")
+                help(sys.argv[0])
         elif opt in ("-d", "--debug"):
             debug = True
         else:
             help(sys.argv[0])
-            sys.exit()
 
     client = Client(debug)
 
@@ -81,7 +109,7 @@ def main():
             text = input()
         except EOFError:
             signal_handler(0, 0)
-        client.speak(text, lang, voice)
+        client.speak(text, lang, voice, rate, pitch, volume)
 
 
 if __name__ == "__main__":

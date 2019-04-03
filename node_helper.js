@@ -32,6 +32,9 @@ module.exports = NodeHelper.create({
         var params = []
         if(this.config.language) params.push("--lang=" + this.config.language)
         if(this.config.voice) params.push("--voice=" + this.config.voice)
+        if(this.config.rate) params.push("--rate=" + this.config.rate)
+        if(this.config.pitch) params.push("--pitch=" + this.config.pitch)
+        if(this.config.volume) params.push("--volume=" + this.config.volume)
 
         console.log("Starting client: " + script + " " + params)
 
