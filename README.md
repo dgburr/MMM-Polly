@@ -55,6 +55,8 @@ echo "Hello world" | python3 polly_client.py
         pitch: 0,       // Specify a percentage to raise or lower the tone (pitch) of the speech.  The maximum value allowed is +50%.  The smallest value allowed is -33.3%.
         volume: 0,      // Change the volume of speech (in decibels).  +6dB is approximately twice the current amplitude. The maximum positive value is about +4.08dB.  -6dB means approximately half the current amplitude.
         notification: "SPEECH_DISPATCHER_SAID", // notification to send after text has been spoken
+        playProgram: "mpg321", // Sound playing program.
+        notification: "SPEECH_DISPATCHER_SAID", // Notification to send after text has been spoken.
     }
 }
 ```

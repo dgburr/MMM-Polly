@@ -35,6 +35,7 @@ module.exports = NodeHelper.create({
         if(this.config.rate) params.push("--rate=" + this.config.rate)
         if(this.config.pitch) params.push("--pitch=" + this.config.pitch)
         if(this.config.volume) params.push("--volume=" + this.config.volume)
+        if(this.config.playProgram) params.push("--player=" + this.config.playProgram)
 
         console.log("Starting client: " + script + " " + params)
 

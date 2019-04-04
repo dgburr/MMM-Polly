@@ -25,7 +25,7 @@ class Client:
 
         self.polly = boto3.client('polly')
 
-    def speak(self, text, lang, voice, rate, pitch, volume):
+    def speak(self, text, lang, voice, rate, pitch, volume, player):
         text = '<speak><prosody rate="%d%%" pitch="%+d%%" volume="%+ddB">%s</prosody></speak>' % (rate, pitch, volume, text)
         resp = self.polly.synthesize_speech(OutputFormat='mp3',
                 Text=text,
@@ -35,7 +35,7 @@ class Client:
         audio_stream = resp['AudioStream']
         audio_data = audio_stream.read()
         audio_stream.close()
-        subprocess.run(['mpg123', '-q', '-'], input=audio_data, stderr=subprocess.DEVNULL)
+        subprocess.run([player, '-'], input=audio_data, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
         print("FINISHED_UTTERANCE")
 
@@ -51,6 +51,7 @@ def help(name):
     print("\t-r|--rate=<rate>:    Modify the rate of speech, percentage: [20-200] (default: 100)")
     print("\t-p|--pitch=<pitch>:  Raise or lower the pitch (tone) of the speech, percentage: [-33-50] (default: 0)")
     print("\t-m|--volume=<vol>:   Change the volume for the speech, decibels (default: 0)")
+    print("\t-y|--player=<vol>:   Sound playing program (default mpg123)")
     print("\t-d|--debug:          Increase verbosity")
     print("\t-h|--help:           Show usage information\n")
     sys.exit(2)
@@ -61,7 +62,7 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "l:v:r:p:m:dh", ["lang=", "voice=", "rate=", "pitch=", "volume=", "debug", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "l:v:r:p:m:y:dh", ["lang=", "voice=", "rate=", "pitch=", "volume=", "player=", "debug", "help"])
     except getopt.GetoptError as err:
         print(str(err))
         help(sys.argv[0])
@@ -70,6 +71,7 @@ def main():
     rate = 100 # percent
     pitch = 0 # percent (+/-)
     volume = 0 # decibels (+/-)
+    player = "mpg321"
     debug = False
     for opt, arg in opts:
         if opt in ("-l", "--lang"):
@@ -94,6 +96,8 @@ def main():
             except ValueError:
                 print("Error: volume should be an integer\n")
                 help(sys.argv[0])
+        elif opt in ("-y", "--player"):
+            player = arg
         elif opt in ("-d", "--debug"):
             debug = True
         else:
@@ -109,7 +113,7 @@ def main():
             text = input()
         except EOFError:
             signal_handler(0, 0)
-        client.speak(text, lang, voice, rate, pitch, volume)
+        client.speak(text, lang, voice, rate, pitch, volume, player)
 
 
 if __name__ == "__main__":
