@@ -26,6 +26,7 @@ class Client:
         self.polly = boto3.client('polly')
 
     def speak(self, text, lang, voice, rate, pitch, volume, player):
+        text = text.replace('<', '&lt;').replace('>', '&gt;')
         text = '<speak><prosody rate="%d%%" pitch="%+d%%" volume="%+ddB">%s</prosody></speak>' % (rate, pitch, volume, text)
         resp = self.polly.synthesize_speech(OutputFormat='mp3',
                 Text=text,
