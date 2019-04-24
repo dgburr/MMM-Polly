@@ -3,7 +3,7 @@ A MagicMirror² Module for performing Text-to-Speech using Amazon Polly
 
 ## Screenshot
 
-[![Screenshot of MMM-Polly](screenshot.png)](https://www.youtube.com/watch?v=IFhaPkYSVIs)
+[![Screenshot of MMM-Polly](screenshot.png)](https://www.youtube.com/watch?v=xdLz0bdxO58)
 
 ## Installation
 
